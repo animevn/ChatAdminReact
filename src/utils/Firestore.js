@@ -6,10 +6,13 @@ export const FirestoreContext = createContext(null);
 
 export const FirestoreProvider = ({children})=>{
   const {currentUser} = useContext(AuthContext);
+  const [listChat, setListChat] = useState([]);
+  const [currentChat, setCurrentChat] = useState();
   const [messages, setMessages] = useState([]);
   const [database, setDatabase] = useState("");
   const [ip, setIp] = useState("");
 
+  //get ip info
   useEffect(()=>{
     async function getIPaddress() {
       await fetch("http://ip-api.com/json").then(response=>response.json())
@@ -20,19 +23,37 @@ export const FirestoreProvider = ({children})=>{
     getIPaddress().then();
   }, [])
 
+  //get chat list
+  useEffect(()=>{
+    async function checkAdmin() {
+      if (currentUser !== null){
+        const db = firebase.firestore().collection("messages");
+        await db.onSnapshot(async snapshot => {
+          let temp = [];
+          snapshot.forEach(doc=>temp.push({id:doc.id, data:doc.data()}));
+          await setListChat(temp);
+        }, error => {
+          console.log("error load admin: " + error);
+        })
+      }
+    }
+    checkAdmin().then();
+  }, [currentUser])
+
+  //load chat item
   useEffect(()=>{
     async function loadMessage(){
-      if (currentUser){
-        const db = firebase.firestore().collection("messages").doc(currentUser.uid);
+      if (currentChat){
+        const db = firebase.firestore().collection("messages").doc(currentChat);
         await db.onSnapshot(doc => {
           if (doc.exists){
             setDatabase(doc.data().string);
           }
-        })
+        }, error => console.log("error load db: " + error))
       }
     }
     loadMessage().then()
-  }, [currentUser]);
+  }, [currentChat]);
 
   useEffect(()=>{
     async function populateMessages(){
@@ -47,8 +68,6 @@ export const FirestoreProvider = ({children})=>{
 
     // eslint-disable-next-line
   }, [database]);
-
-
 
   // useEffect(()=>{
   //   async function loadMessage(){
@@ -68,7 +87,8 @@ export const FirestoreProvider = ({children})=>{
   // }, [currentUser]);
 
   return (
-    <FirestoreContext.Provider value ={{messages, setMessages, ip}}>
+    <FirestoreContext.Provider value ={{listChat, messages, setMessages, ip,
+      currentChat, setCurrentChat, setListChat}}>
       {children}
     </FirestoreContext.Provider>
   );

@@ -7,7 +7,7 @@ const Login = ()=>{
 
   const {currentUser} = useContext(AuthContext);
   if (currentUser) {
-    return <Redirect to="/secret" />
+    return <Redirect to="/admin-secret" />
   }
 
   const handleLogin = async event=>{

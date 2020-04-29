@@ -6,9 +6,9 @@ import {AuthProvider} from "./utils/Auth";
 import PrivateRoute from "./utils/PrivateRoute";
 import Home from "./Home";
 import Login from "./Login";
-import Register from "./Register";
 import Secret from "./Secret";
 import {FirestoreProvider} from "./utils/Firestore";
+import ChatItem from "./ChatItem";
 
 const App = ()=>{
 
@@ -20,16 +20,16 @@ const App = ()=>{
            <Header/>
            {/*App code is below here*/}
 
-           <Route exact path="/" component={Home}/>
-           <Route exact path="/login" component={Login}/>
-           <Route exact path="/register" component={Register}/>
+           <Route exact path="/admin" component={Home}/>
+           <Route exact path="/admin-login" component={Login}/>
            <FirestoreProvider>
-             <PrivateRoute exact path="/secret" component={Secret}/>
+             <PrivateRoute exact path="/admin-secret" component={Secret}/>
+             <PrivateRoute exact path="/admin-chat" component={ChatItem}/>
            </FirestoreProvider>
 
            {/*Appcode is up here*/}
          </div>
-         {/*<Footer/>*/}
+         <Footer/>
        </div>
      </Router>
    </AuthProvider>
