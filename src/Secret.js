@@ -8,7 +8,7 @@ import {FirestoreContext} from "./utils/Firestore";
 const Secret = ()=>{
   const {currentUser} = useContext(AuthContext);
   const [message, setMessage] = useState("");
-  const {messages, setMessages} = useContext(FirestoreContext);
+  const {messages, setMessages, ip} = useContext(FirestoreContext);
 
   useEffect(()=>{
     const obj = document.getElementById("scroll");

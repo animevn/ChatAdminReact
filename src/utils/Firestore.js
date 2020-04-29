@@ -8,6 +8,17 @@ export const FirestoreProvider = ({children})=>{
   const {currentUser} = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
   const [database, setDatabase] = useState("");
+  const [ip, setIp] = useState("");
+
+  useEffect(()=>{
+    async function getIPaddress() {
+      await fetch("http://ip-api.com/json").then(response=>response.json())
+      .then(async response=>{
+        await setIp({ip:response.query, region:response.regionName, country:response.country});
+      })
+    }
+    getIPaddress().then();
+  }, [])
 
   useEffect(()=>{
     async function loadMessage(){
@@ -37,6 +48,8 @@ export const FirestoreProvider = ({children})=>{
     // eslint-disable-next-line
   }, [database]);
 
+
+
   // useEffect(()=>{
   //   async function loadMessage(){
   //     if (currentUser){
@@ -55,7 +68,7 @@ export const FirestoreProvider = ({children})=>{
   // }, [currentUser]);
 
   return (
-    <FirestoreContext.Provider value ={{messages, setMessages}}>
+    <FirestoreContext.Provider value ={{messages, setMessages, ip}}>
       {children}
     </FirestoreContext.Provider>
   );
